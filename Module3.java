@@ -7,7 +7,7 @@
   @author Michael Goss <mgoss@csumb.edu>
   @author Shawn Wills <swills@csumb.edu>
 
-*/
+ */
 
 import java.util.Scanner;
 import java.util.Arrays;
@@ -52,8 +52,8 @@ public class Module3
                    the while condition only gets checked every numOfHands
                    times. */
                 if(numOfCardsLeft != 0) {
-                  hands[i].takeCard(deck.dealCard());
-                  numOfCardsLeft--;
+                    hands[i].takeCard(deck.dealCard());
+                    numOfCardsLeft--;
                 }
             }
         }
@@ -120,14 +120,15 @@ class Card
 {
 
     public static enum Suit { clubs, diamonds, hearts, spades };
-    public static char[] validValues = { 'a', 'k', 'q', 'j', '2', '3', '4', '5', '6', '7', '8', '9', 'T' };
+    public static char[] validValues = { 'A', '2', '3', '4', '5', '6', '7',
+            '8', '9', 'T', 'J', 'Q', 'K'};
 
     private char value;
     private Suit suit;
     private boolean errorFlag;
 
 
-    /*
+    /**
      * Creates a card with default parameters
      */
     public Card()
@@ -135,18 +136,22 @@ class Card
         this('A', Suit.spades);
     }
 
-    /*
+    /**
      * Creates a card with the given value and suit.
      */
     public Card(char value, Suit suit)
     {
-        this.value = value;
-        this.suit = suit;
-        this.errorFlag = false;
+        boolean errFlag = true;
+        if (this.isValid(value, suit)) {
+            this.value = value;
+            this.suit = suit;
+            errFlag = false;
+        }
+        this.errorFlag = errFlag;
     }
 
 
-    /*
+    /**
      * Outputs the card in a human-readable format
      * @return String representation of the card
      */
@@ -156,35 +161,34 @@ class Card
             Character.toString(this.value) + " of " + this.suit;
     }
 
-    /*
+    /**
      * Sets the value of the card to the given value and suit,
      * after ensuring that the parameters are valid.
      * @return A boolean indicating success or failure
      */
     public boolean set(char value, Suit suit)
     {
+        boolean ret = false;
         if (this.isValid(value, suit)) {
             this.value = value;
             this.suit = suit;
             this.errorFlag = false;
-            return true;
+            ret = true;
         }
-        this.suit = suit;
-        this.errorFlag = true;
-        return false;
+        return ret;
     }
 
-    /*
+    /**
      * Compares the value and suit of two cards to determine if they are equal
      * @param card Card to compare
      * @return A boolean indicating equality
      */
     public boolean equals(Card card)
     {
-        return (card.value == this.value && card.suit == this.suit) ? true : false;
+        return card.value == this.value && card.suit == this.suit;
     }
 
-    /*
+    /**
      * Returns the value of the card
      * @return The value of the card
      */
@@ -193,7 +197,8 @@ class Card
         return this.value;
     }
 
-    /* Returns the suit of the card
+    /**
+     * Returns the suit of the card
      * @return The suit of the card
      */
     public Suit getSuit()
@@ -201,7 +206,7 @@ class Card
         return this.suit;
     }
 
-    /*
+    /**
      * Returns the error state of the card
      * @return A boolean indicating if the card is in an invalid state
      */
@@ -210,7 +215,7 @@ class Card
         return this.errorFlag;
     }
 
-    /*
+    /**
      * Determines if the card's value and suit are valid
      * @param value The card's value
      * @param suit The card's suit
@@ -218,7 +223,7 @@ class Card
      */
     private boolean isValid(char value, Suit suit)
     {
-        if (Arrays.asList(this.validValues).contains(value))
+        if (Arrays.asList(Card.validValues).contains(value))
             return true;
         return false;
     }
@@ -233,7 +238,7 @@ class Hand
     private Card[] myCards = new Card[MAX_CARDS];
     private int numCards;
 
-    /*
+    /**
      * Initialize an empty hand
      */
     public Hand()
@@ -241,7 +246,7 @@ class Hand
         this.numCards = 0;
     }
 
-    /*
+    /**
      * Clears the hand by setting all array values to null
      */
     public void resetHand()
@@ -250,10 +255,9 @@ class Hand
             myCards[i] = null;
         }
         this.numCards = 0;
-        return;
     }
 
-    /*
+    /**
      * Takes a card and adds it to the hand
      * @return A boolean indicating success or failure
      */
@@ -267,7 +271,7 @@ class Hand
         return false;
     }
 
-    /*
+    /**
      * Removes the card from the hand and adjusts the numCards value
      * @return The card that was removed from the hand
      */
@@ -279,7 +283,7 @@ class Hand
         return card;
     }
 
-    /*
+    /**
      * Outputs the hand in a human-readable format
      * @return String representation of the hand
      */
@@ -292,17 +296,20 @@ class Hand
         return output;
     }
 
-    /*
+    /**
      * Returns the card at the given index
      * @param k Index of the card
-     * @return Card object
+     * @return Card object, Returns a card with errorFlag = true if k is bad.
      */
     public Card inspectCard(int k)
     {
-        return this.myCards[k];
+        if (k >= 0 && k < this.numCards)
+            return this.myCards[k];
+        else
+            return new Card('0', Card.Suit.clubs);
     }
 
-    /*
+    /**
      * Returns the number of cards in the hand, NOT the length of the array.
      * @return Number of cards in the hand
      */
@@ -324,7 +331,7 @@ class Deck
     private int topCard;
     private int numPacks;
 
-    /*
+    /**
      * Initialize a deck with a single pack
      */
     Deck()
@@ -332,13 +339,13 @@ class Deck
         this(1);
     }
 
-    /*
+    /**
      * Ensures that the number of packs wouldn't result in MAX_CARDS
      * being exceeded before creating the deck.
      */
     Deck(int numPacks)
     {
-        this.allocateMasterPack();
+        Deck.allocateMasterPack();
         if(numPacks > MAX_CARDS/52)
             this.numPacks = 6;
         this.numPacks = numPacks;
@@ -346,7 +353,8 @@ class Deck
         this.init(this.numPacks);
     }
 
-    /* Initializes the deck with the specified number of packs.
+    /**
+     * Initializes the deck with the specified number of packs.
      * This number gets multiplied by 52 to create the array.
      * @param numPacks The number of packs to generate.
      */
@@ -362,23 +370,25 @@ class Deck
         return;
     }
 
-    /*
-     * Shuffles the deck by iterating through each position in the array,
-     * then swaps it with another card using a random number generator.
+    /**
+     * Shuffles the deck using Fisher-Yates algorithm.
+     * See "C: How to Program" by Deitel and Deitel or
+     * "The Art of Computer Programming" by Knuth.
      */
     public void shuffle()
     {
         Random rand = new Random();
-        for(int i = 0; i < (this.numPacks * 52); i++) {
-            int r = rand.nextInt(this.numPacks * 51);
-            Card first = this.cards[r];
-            this.cards[r] = this.cards[i];
-            this.cards[i] = first;
+        for(int i = this.numPacks * 52 - 1; i > 0; i--) {
+            int r = rand.nextInt(i + 1);
+            if (r != i) {
+                Card tmpCard = this.cards[r];
+                this.cards[r] = this.cards[i];
+                this.cards[i] = tmpCard;
+            }
         }
-        return;
     }
 
-    /*
+    /**
      * Deals the top card in the deck, then sets its value to null
      * and adjusts the topCard variable.
      * @return The top card object
@@ -387,11 +397,11 @@ class Deck
     {
         Card c = this.cards[this.topCard];
         this.cards[this.topCard] = null;
-        this.topCard = this.topCard - 1;
+        this.topCard--;
         return c;
     }
 
-    /*
+    /**
      * Generates the initial 52 cards without shuffling. Only gets
      * allocated a single time during this program's runtime.
      */
@@ -410,7 +420,7 @@ class Deck
         return;
     }
 
-    /*
+    /**
      * Returns the top card in the deck
      * @return Top card in the deck
      */
@@ -420,7 +430,7 @@ class Deck
     }
 
 
-    /*
+    /**
      * Returns the number of packs
      * @return Number of packs
      */
@@ -429,14 +439,17 @@ class Deck
         return this.numPacks;
     }
 
-    /*
+    /**
      * Returns the card at the given index
      * @param k Index of the card
-     * @return Card object
+     * @return Card object, Returns a card with errorFlag = true if k is bad.
      */
     public Card inspectCard(int k)
     {
-        return this.cards[k];
+        if (k >=0 && k <= getTopCard())
+            return this.cards[k];
+        else
+            return new Card('0', Card.Suit.clubs);
     }
 
 }
