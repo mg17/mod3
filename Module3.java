@@ -120,7 +120,7 @@ class Card
 {
 
     public static enum Suit { clubs, diamonds, hearts, spades };
-    public static char[] validValues = { 'A', '2', '3', '4', '5', '6', '7',
+    public static Character[] validValues = { 'A', '2', '3', '4', '5', '6', '7',
             '8', '9', 'T', 'J', 'Q', 'K'};
 
     private char value;
@@ -141,15 +141,8 @@ class Card
      */
     public Card(char value, Suit suit)
     {
-        boolean errFlag = true;
-        if (this.isValid(value, suit)) {
-            this.value = value;
-            this.suit = suit;
-            errFlag = false;
-        }
-        this.errorFlag = errFlag;
+        this.set(value, suit);
     }
-
 
     /**
      * Outputs the card in a human-readable format
@@ -168,14 +161,13 @@ class Card
      */
     public boolean set(char value, Suit suit)
     {
-        boolean ret = false;
         if (this.isValid(value, suit)) {
             this.value = value;
             this.suit = suit;
             this.errorFlag = false;
-            ret = true;
-        }
-        return ret;
+        } else
+            this.errorFlag = true;
+        return !this.errorFlag;
     }
 
     /**
@@ -185,7 +177,8 @@ class Card
      */
     public boolean equals(Card card)
     {
-        return card.value == this.value && card.suit == this.suit;
+        return card.getValue() == this.getValue() &&
+            card.getSuit() == this.getSuit();
     }
 
     /**
@@ -223,9 +216,7 @@ class Card
      */
     private boolean isValid(char value, Suit suit)
     {
-        if (Arrays.asList(Card.validValues).contains(value))
-            return true;
-        return false;
+        return Arrays.asList(Card.validValues).contains(new Character(value));
     }
 
 }
