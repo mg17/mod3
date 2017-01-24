@@ -45,15 +45,14 @@ public class Module3
 
         /* Using the aforementioned number, we begin dealing
            cards -- one card to each hand, then loop. */
-        while(numOfCardsLeft > 0) {
+        while(numOfCardsLeft >= numOfHands) {
             for(int i = 0; i < numOfHands; i++) {
-                /* The while condition may no longer be true at this
-                   stage, so we need to double check. This is because
-                   the while condition only gets checked every numOfHands
-                   times. */
-                if(numOfCardsLeft != 0) {
-                    hands[i].takeCard(deck.dealCard());
+                if (hands[i].takeCard(deck.dealCard()))
                     numOfCardsLeft--;
+                else {
+                    /* break if we overflow a hand */
+                    numOfCardsLeft = 0;
+                    break;
                 }
             }
         }
@@ -83,15 +82,14 @@ public class Module3
 
         /* Using the aforementioned number, we begin dealing
            cards -- one card to each hand, then loop. */
-        while(numOfCardsLeft > 0) {
+        while(numOfCardsLeft >= numOfHands) {
             for(int i = 0; i < numOfHands; i++) {
-                /* The while condition may no longer be true at this
-                   stage, so we need to double check. This is because
-                   the while condition only gets checked every numOfHands
-                   times. */
-                if(numOfCardsLeft != 0) {
-                    hands[i].takeCard(deck.dealCard());
+                if (hands[i].takeCard(deck.dealCard()))
                     numOfCardsLeft--;
+                else {
+                    /* break if we overflow a hand */
+                    numOfCardsLeft = 0;
+                    break;
                 }
             }
         }
@@ -254,7 +252,7 @@ class Hand
      */
     public boolean takeCard(Card card)
     {
-        if(this.numCards <= MAX_CARDS) {
+        if(this.numCards < MAX_CARDS) {
             myCards[this.numCards] = card;
             this.numCards++;
             return true;
